@@ -16,7 +16,9 @@ class MiniMoog(PyoObject):
 
         self._notes = Notein(scale = 1)
         self._notes.keyboard()
+
         self._glide = Sig(0)
+        self._bend = Sig(1)
         ### DISCARDED self._octaves = [0.25,0.5,1,2,3,4]
 
         self._env = MidiAdsr(self._notes["velocity"])
@@ -36,36 +38,36 @@ class MiniMoog(PyoObject):
         self._osc2_wf =Sig(0)
         self._osc3_wf =Sig(0)
 
-        self._tune = Sig(0)
-        self._osc2_det = Sig(0)
-        self._osc3_det = Sig(0)
+        self._tune = Sig(1)
+        self._osc2_det = Sig(1)
+        self._osc3_det = Sig(1)
 
-        self._t_1 = LinTable([(0,-0.5),(3372,-0.3),(3380,1),(4096,1),(5220,1),(5228,-0.7),(8191,-0.5)])
-        self._t_2 = LinTable([(0,-0.5),(3600,-0.3),(3608,1),(4096,1),(4990,1),(4998,-0.7),(8191,-0.5)])
+        self._t_1 = LinTable([(0,-0.7),(3372,-0.5),(3380,1),(5220,0.9),(5228,-0.9),(8191,-0.7)])
+        self._t_2 = LinTable([(0,-0.7),(3600,-0.5),(3608,1),(4990,0.9),(4998,-0.9),(8191,-0.7)])
 
         self._list_1 = [
-            RCOsc((self._notes["pitch"]*4)/(2**(5-self._osc1_oct))+self._tune,mul = self._env*self._osc1_switch, sharp=0),
-            Sharktooth((self._notes["pitch"]*4)/(2**(5-self._osc1_oct))+self._tune,mul = self._env*self._osc1_switch),
-            LFO((self._notes["pitch"]*4)/(2**(5-self._osc1_oct))+self._tune,mul = self._env*self._osc1_switch, sharp=1,type = 0),
-            RCOsc((self._notes["pitch"]*4)/(2**(5-self._osc1_oct))+self._tune,mul = self._env*self._osc1_switch, sharp=1),
-            Osc(self._t_1, freq = (self._notes["pitch"]*4)/(2**(5-self._osc1_oct))+self._tune,mul = self._env*self._osc1_switch),
-            Osc(self._t_2, freq = (self._notes["pitch"]*4)/(2**(5-self._osc1_oct))+self._tune,mul = self._env*self._osc1_switch)
+            RCOsc((self._notes["pitch"]*4)/(2**(5-self._osc1_oct))*self._tune*self._bend,mul = self._env*self._osc1_switch, sharp=0),
+            Sharktooth((self._notes["pitch"]*4)/(2**(5-self._osc1_oct))*self._tune*self._bend,mul = self._env*self._osc1_switch),
+            LFO((self._notes["pitch"]*4)/(2**(5-self._osc1_oct))*self._tune*self._bend,mul = self._env*self._osc1_switch, sharp=1,type = 0),
+            RCOsc((self._notes["pitch"]*4)/(2**(5-self._osc1_oct))*self._tune*self._bend,mul = self._env*self._osc1_switch, sharp=1),
+            Osc(self._t_1, freq = (self._notes["pitch"]*4)/(2**(5-self._osc1_oct))*self._tune*self._bend,mul = self._env*self._osc1_switch),
+            Osc(self._t_2, freq = (self._notes["pitch"]*4)/(2**(5-self._osc1_oct))*self._tune*self._bend,mul = self._env*self._osc1_switch)
         ]
         self._list_2 = [
-            RCOsc((self._notes["pitch"]*4)/(2**(5-self._osc2_oct))+self._osc2_det+self._tune,mul = self._env*self._osc2_switch, sharp=0),
-            Sharktooth((self._notes["pitch"]*4)/(2**(5-self._osc2_oct))+self._osc2_det+self._tune,mul = self._env*self._osc2_switch),
-            LFO((self._notes["pitch"]*4)/(2**(5-self._osc2_oct))+self._osc2_det+self._tune,mul = self._env*self._osc2_switch, sharp=1,type = 0),
-            RCOsc((self._notes["pitch"]*4)/(2**(5-self._osc2_oct))+self._osc2_det+self._tune,mul = self._env*self._osc2_switch, sharp=1),
-            Osc(self._t_1, freq = (self._notes["pitch"]*4)/(2**(5-self._osc2_oct))+self._osc2_det+self._tune,mul = self._env*self._osc2_switch),
-            Osc(self._t_2, freq = (self._notes["pitch"]*4)/(2**(5-self._osc2_oct))+self._osc2_det+self._tune,mul = self._env*self._osc2_switch)
+            RCOsc((self._notes["pitch"]*4)/(2**(5-self._osc2_oct))*self._tune*self._osc2_det*self._bend,mul = self._env*self._osc2_switch, sharp=0),
+            Sharktooth((self._notes["pitch"]*4)/(2**(5-self._osc2_oct))*self._tune*self._osc2_det*self._bend,mul = self._env*self._osc2_switch),
+            LFO((self._notes["pitch"]*4)/(2**(5-self._osc2_oct))*self._tune*self._osc2_det*self._bend,mul = self._env*self._osc2_switch, sharp=1,type = 0),
+            RCOsc((self._notes["pitch"]*4)/(2**(5-self._osc2_oct))*self._tune*self._osc2_det*self._bend,mul = self._env*self._osc2_switch, sharp=1),
+            Osc(self._t_1, freq = (self._notes["pitch"]*4)/(2**(5-self._osc2_oct))*self._tune*self._osc2_det*self._bend,mul = self._env*self._osc2_switch),
+            Osc(self._t_2, freq = (self._notes["pitch"]*4)/(2**(5-self._osc2_oct))*self._tune*self._osc2_det*self._bend,mul = self._env*self._osc2_switch)
         ]
         self._list_3 = [
-            RCOsc((self._notes["pitch"]*4)/(2**(5-self._osc3_oct))+self._osc3_det+self._tune,mul = self._env*self._osc3_switch, sharp=0),
-            LFO((self._notes["pitch"]*4)/(2**(5-self._osc3_oct))+self._osc3_det+self._tune,mul = self._env*self._osc3_switch, sharp=1,type = 1),
-            LFO((self._notes["pitch"]*4)/(2**(5-self._osc3_oct))+self._osc3_det+self._tune,mul = self._env*self._osc3_switch, sharp=1,type = 0),
-            RCOsc((self._notes["pitch"]*4)/(2**(5-self._osc3_oct))+self._osc3_det+self._tune,mul = self._env*self._osc3_switch, sharp=1),
-            Osc(self._t_1, freq = (self._notes["pitch"]*4)/(2**(5-self._osc3_oct))+self._osc3_det+self._tune,mul = self._env*self._osc3_switch),
-            Osc(self._t_2, freq = (self._notes["pitch"]*4)/(2**(5-self._osc3_oct))+self._osc3_det+self._tune,mul = self._env*self._osc3_switch)
+            RCOsc((self._notes["pitch"]*4)/(2**(5-self._osc3_oct))*self._tune*self._osc3_det*self._bend,mul = self._env*self._osc3_switch, sharp=0),
+            LFO((self._notes["pitch"]*4)/(2**(5-self._osc3_oct))*self._tune*self._osc3_det*self._bend,mul = self._env*self._osc3_switch, sharp=1,type = 1),
+            LFO((self._notes["pitch"]*4)/(2**(5-self._osc3_oct))*self._tune*self._osc3_det*self._bend,mul = self._env*self._osc3_switch, sharp=1,type = 0),
+            RCOsc((self._notes["pitch"]*4)/(2**(5-self._osc3_oct))*self._tune*self._osc3_det*self._bend,mul = self._env*self._osc3_switch, sharp=1),
+            Osc(self._t_1, freq = (self._notes["pitch"]*4)/(2**(5-self._osc3_oct))*self._tune*self._osc3_det*self._bend,mul = self._env*self._osc3_switch),
+            Osc(self._t_2, freq = (self._notes["pitch"]*4)/(2**(5-self._osc3_oct))*self._tune*self._osc3_det*self._bend,mul = self._env*self._osc3_switch)
         ]
 
 
@@ -104,7 +106,7 @@ class MiniMoog(PyoObject):
 
     def ctrl(self):
         
-        self._tune.ctrl([SLMap(-5,5,'lin','value',0,'float')],title='Tune')
+        self._tune.ctrl([SLMap(1/8,5,'log','value',1,'float')],title='Tune')
         self._osc1_switch.ctrl([SLMap(0,1,'lin','value',0,'int')],title='OSC 1 switch')
         self._osc1.ctrl(title='OSC 1 Volume')
         self._osc1_oct.ctrl([SLMap(0,5,'lin','value',1,'int')],title='OSC 1 octave')
@@ -112,13 +114,13 @@ class MiniMoog(PyoObject):
 
         self._osc2_switch.ctrl([SLMap(0,1,'lin','value',0,'int')],title='OSC 2 switch')
         self._osc2.ctrl(title='OSC 2 Volume')
-        self._osc2_det.ctrl([SLMap(-5,5,'lin','value',0,'float')],title='Detune')
+        self._osc2_det.ctrl([SLMap(1/8,6,'log','value',1,'float')],title='Detune')
         self._osc2_oct.ctrl([SLMap(0,5,'lin','value',1,'int')],title='OSC 2 octave')
         self._osc2_wf.ctrl([SLMap(0,5,'lin','value',0,'int')],title='OSC 2 waveform')
 
         self._osc3_switch.ctrl([SLMap(0,1,'lin','value',0,'int')],title='OSC 3 switch')
         self._osc3.ctrl(title='OSC 3 Volume')
-        self._osc3_det.ctrl([SLMap(-5,5,'lin','value',0,'float')],title='Detune')
+        self._osc3_det.ctrl([SLMap(1/8,5,'log','value',1,'float')],title='Detune')
         self._osc3_oct.ctrl([SLMap(0,5,'lin','value',1,'int')],title='OSC 3 octave')
         self._osc3_wf.ctrl([SLMap(0,5,'lin','value',0,'int')],title='OSC 3 waveform')
 
@@ -130,6 +132,7 @@ class MiniMoog(PyoObject):
         self._noise_mul.ctrl([SLMap(0,4,'lin','value',0,'float')], title='Noise Mul')
 
         self._env.ctrl(title='Loudness Contour')
+        self._bend.ctrl([SLMap((2**(-1/12)),(2**(1/12)),'lin','value',1,'float')],title='Pitch Bend')
         #self._glide.ctrl([SLMap(0,100,'lin','value',0,"float")])
 
 
@@ -150,10 +153,10 @@ class Sharktooth(PyoObject):
         super().__init__()
         self._amp = 0.5
         self._freq = freq
-        self._phase = 0.750
+        self._phase = 0.738
         self._mul = mul/6
 
-        self._phasor = Phasor(freq=self._freq, phase = self._phase, mul = 0.292)
+        self._phasor = Phasor(freq=self._freq, phase = self._phase, mul = 0.3)
         self._saw_waveform = 1 - 2 * self._phasor
 
         self._saw_waveform = Sig(self._saw_waveform, mul=self._amp*self._mul)
