@@ -14,10 +14,10 @@
   Controls(pitch_bend, glide, mod[incomplete], main_volume[incomplete])
 
   The waveforms of the original instrument have been emulated for each Oscillator
-'''
-:Parent: :py:class:`PyoObject`
-  :Args:
-      empty
+  
+    :Parent: :py:class:`PyoObject`
+          :Args:
+               empty
     
     >>> s = Server().boot()
     >>> s.start()
@@ -25,4 +25,4 @@
     >>> minimoog.ctrl()
     >>> minimoog.out()
     >>> s.gui(locals())
-  '''
+ 
