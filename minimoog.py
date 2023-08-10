@@ -4,7 +4,6 @@ class MiniMoog(PyoObject):
     Emulated Minimoog Model D
 
     List of control Features:
-    
     OSC 1(wf[triangle, sharktooth, sawtooth, square, wide rect, narrow rect], switch, tune, octave, volume)
     OSC 2(wf[triangle, sharktooth, sawtooth, square, wide rect, narrow rect], switch, detune, octave, volume)
     OSC 3(wf[triangle, reverse sawtooth, sawtooth, square, wide rect, narrow rect], switch, detune, octave, volume)
@@ -12,27 +11,25 @@ class MiniMoog(PyoObject):
     Filter(freq, res, contour_amount, attack, decay, sustain)
     LFO modulation(type[square, tri], mul, freq)
     Loudness Contour(attack, decay, sustain)
-    Controls(pitch_bend, glide, mod[incomplete], main_volume[incomplete])
+    Controls(pitch_bend, glide, mod[absent], main_volume[absent])
 
     The waveforms of the original instrument have been emulated for each Oscillator
 
-
+    Known Bugs: 
+    Sometime the process crashes giving this error:
+    OverflowError: cannot convert float infinity to integer
+   
+    Currently working on a solution
+    
     :Parent: :py:class:`PyoObject`
 
     :Args:
-
         empty
 
-    >>> s = Server().boot()
-    >>> s.start()
-    >>> minimoog = MiniMoog()
-    >>> minimoog.ctrl()
-    >>> minimoog.out()
-    >>> s.gui(locals())
     """
 
-    def __init__(self ):
-        super().__init__()
+    def __init__(self):
+        PyoObject.__init__(self)
 
         self._notes = Notein(scale = 1)
         self._notes.keyboard()
@@ -71,7 +68,7 @@ class MiniMoog(PyoObject):
         self._osc1_freq = (self._notes["pitch"]*4)/(2**(5-self._osc1_oct))*self._tune*self._bend
         self._osc2_freq = (self._notes["pitch"]*4)/(2**(5-self._osc2_oct))*self._tune*self._osc2_det*self._bend
         self._osc3_freq = (self._notes["pitch"]*4)/(2**(5-self._osc3_oct))*self._tune*self._osc3_det*self._bend
-
+        print(type(self._osc1_freq))
         self._osc1_freq = Port(self._osc1_freq, risetime=self._glide, falltime=self._glide)
         self._osc2_freq = Port(self._osc2_freq, risetime=self._glide, falltime=self._glide)
         self._osc3_freq = Port(self._osc3_freq, risetime=self._glide, falltime=self._glide)
@@ -137,7 +134,7 @@ class MiniMoog(PyoObject):
         self._out= Pan(self._LP_mix)
 
         #self._spec = Spectrum(self._out)
-        self._scope = Scope([self._LP_env])
+        self._scope = Scope([self._out])
         self._base_objs = self._out.getBaseObjects()
 
     def ctrl(self):
@@ -181,16 +178,148 @@ class MiniMoog(PyoObject):
 
 
     def play(self, dur = 0, delay =0):
+        self._notes.play(dur, delay)
+        self._glide.play(dur, delay) 
+        self._bend.play(dur, delay) 
+        self._env.play(dur, delay) 
+        self._f_env.play(dur, delay) 
+        self._osc1_switch.play(dur, delay)
+        self._osc2_switch.play(dur, delay) 
+        self._osc3_switch.play(dur, delay) 
+        self._osc1_oct.play(dur, delay)
+        self._osc2_oct.play(dur, delay)          
+        self._osc3_oct.play(dur, delay)  
+        self._osc1_wf.play(dur, delay) 
+        self._osc2_wf.play(dur, delay) 
+        self._osc3_wf.play(dur, delay) 
+        self._tune.play(dur, delay) 
+        self._osc2_det.play(dur, delay) 
+        self._osc3_det.play(dur, delay) 
+        #self._t_1.play(dur, delay) 
+        #self._t_2.play(dur, delay) 
+        self._osc1_freq.play(dur, delay)
+        self._osc2_freq.play(dur, delay) 
+        self._osc3_freq.play(dur, delay)  
+        self._osc1_mul.play(dur, delay)
+        self._osc2_mul.play(dur, delay)
+        self._osc3_mul.play(dur, delay)
+        #self._list_1.play(dur, delay)
+        #self._list_2.play(dur, delay)
+        #self._list_3.play(dur, delay)
+        self._osc1.play(dur, delay)
+        self._osc2.play(dur, delay)
+        self._osc3.play(dur, delay)
+        self._noise_mul.play(dur, delay)
+        self._noise_select.play(dur, delay)
+        self._pnoise.play(dur, delay)
+        self._wnoise.play(dur, delay)
+        self._noise.play(dur, delay)
+        self._LFO.play(dur, delay)
+        self._contour.play(dur, delay)
+        self._mix.play(dur, delay)
+        self._LP.play(dur, delay)
         self._LP_env.play(dur, delay)
+        self._LP_mix.play(dur, delay)
+        self._out.play(dur, delay)
+        #self._spec.play(dur, delay)
+        self._scope.play(dur, delay)
         return super().play(dur, delay)
 
     def stop(self):
+        self._notes.stop()
+        self._glide.stop() 
+        self._bend.stop() 
+        self._env.stop() 
+        self._f_env.stop() 
+        self._osc1_switch.stop()
+        self._osc2_switch.stop() 
+        self._osc3_switch.stop() 
+        self._osc1_oct.stop()
+        self._osc2_oct.stop() 
+        self._osc3_oct.stop()  
+        self._osc1_wf.stop() 
+        self._osc2_wf.stop() 
+        self._osc3_wf.stop() 
+        self._tune.stop() 
+        self._osc2_det.stop() 
+        self._osc3_det.stop() 
+        #self._t_1.stop() 
+        #self._t_2.stop() 
+        self._osc1_freq.stop()
+        self._osc2_freq.stop() 
+        self._osc3_freq.stop() 
+        self._osc1_mul.stop()
+        self._osc2_mul.stop()
+        self._osc3_mul.stop()
+        #self._list_1.stop()
+        #self._list_2.stop()
+        #self._list_3.stop()
+        self._osc1.stop()
+        self._osc2.stop()
+        self._osc3.stop()
+        self._noise_mul.stop()
+        self._noise_select.stop()
+        self._pnoise.stop()
+        self._wnoise.stop()
+        self._noise.stop()
+        self._LFO.stop()
+        self._contour.stop()
+        self._mix.stop()
+        self._LP.stop()
         self._LP_env.stop()
+        self._LP_mix.stop()
+        self._out.stop()
+        #self._spec.stop()
+        self._scope.stop()
         return super().stop()
 
 
     def out(self,chnl=0, inc= 1, dur= 0, delay= 0):
+        self._notes.play(dur, delay)
+        self._glide.play(dur, delay) 
+        self._bend.play(dur, delay) 
+        self._env.play(dur, delay) 
+        self._f_env.play(dur, delay) 
+        self._osc1_switch.play(dur, delay)
+        self._osc2_switch.play(dur, delay) 
+        self._osc3_switch.play(dur, delay) 
+        self._osc1_oct.play(dur, delay)
+        self._osc2_oct.play(dur, delay)          
+        self._osc3_oct.play(dur, delay)  
+        self._osc1_wf.play(dur, delay) 
+        self._osc2_wf.play(dur, delay) 
+        self._osc3_wf.play(dur, delay) 
+        self._tune.play(dur, delay) 
+        self._osc2_det.play(dur, delay) 
+        self._osc3_det.play(dur, delay) 
+        #self._t_1.play(dur, delay) 
+        #self._t_2.play(dur, delay) 
+        self._osc1_freq.play(dur, delay)
+        self._osc2_freq.play(dur, delay) 
+        self._osc3_freq.play(dur, delay)  
+        self._osc1_mul.play(dur, delay)
+        self._osc2_mul.play(dur, delay)
+        self._osc3_mul.play(dur, delay)
+        #self._list_1.play(dur, delay)
+        #self._list_2.play(dur, delay)
+        #self._list_3.play(dur, delay)
+        self._osc1.play(dur, delay)
+        self._osc2.play(dur, delay)
+        self._osc3.play(dur, delay)
+        self._noise_mul.play(dur, delay)
+        self._noise_select.play(dur, delay)
+        self._pnoise.play(dur, delay)
+        self._wnoise.play(dur, delay)
+        self._noise.play(dur, delay)
+        self._LFO.play(dur, delay)
+        self._contour.play(dur, delay)
+        self._mix.play(dur, delay)
+        self._LP.play(dur, delay)
         self._LP_env.play(dur, delay)
+        self._LP_mix.play(dur, delay)
+        self._out.play(dur, delay)
+        #self._spec.play(dur, delay)
+        self._scope.play(dur, delay)
         return super().out(chnl,inc,dur,delay)
     
 
@@ -223,12 +352,14 @@ class Sharktooth(PyoObject):
 
     """
 
-    def __init__(self, freq = 1000, mul=1):
-        super().__init__()
+    def __init__(self, freq = 1000, mul=1, add=0):
+        super().__init__(mul,add)
         self._amp = 0.5
         self._freq = freq
         self._phase = 0.738
         self._mul = mul/6
+
+        self._amp, freq, self._phase, mul, add, lmax = convertArgsToLists(self._amp, freq, self._phase, mul, add)
 
         self._phasor = Phasor(freq=self._freq, phase = self._phase, mul = 0.3)
         self._saw_waveform = 1 - 2 * self._phasor
@@ -241,19 +372,42 @@ class Sharktooth(PyoObject):
         self._base_objs = self._pan.getBaseObjects()
 
 
+    def setFreq(self, x):
+        self._freq = x
+    @property
+    def freq(self):
+        return self._freq
+    @freq.setter
+    def freq(self, x):
+        self.setFreq(x)
 
     def ctrl(self):
         self._phasor.ctrl()
         self._saw_waveform.ctrl()
 
     def play(self, dur = 0, delay =0):
+        self._phasor.play(dur, delay)
+        self._saw_waveform.play(dur, delay)
+        self._tri.play(dur, delay)
+        self._mix.play(dur, delay)
+        self._pan.play(dur, delay)
         return super().play(dur, delay)
 
     def stop(self):
+        self._phasor.stop()
+        self._saw_waveform.stop()
+        self._tri.stop()
+        self._mix.stop()
+        self._pan.stop()
         return super().stop()
 
 
     def out(self,chnl=0, inc= 1, dur= 0, delay= 0):
+        self._phasor.play(dur, delay)
+        self._saw_waveform.play(dur, delay)
+        self._tri.play(dur, delay)
+        self._mix.play(dur, delay)
+        self._pan.play(dur, delay)
         return super().out(chnl,inc,dur,delay)
     
 
