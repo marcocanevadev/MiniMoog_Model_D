@@ -1,6 +1,7 @@
 # MiniMoog_Model_D
 
- Emulated Minimoog Model D
+ Emulation of the Minimoog Model D synthesizer.  
+ Made with Pyo python module by Oliver Bélanger.
 
   List of control Features:
     
